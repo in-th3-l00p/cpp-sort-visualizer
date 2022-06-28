@@ -17,6 +17,16 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_shuffleButton_clicked();
+    void on_delaySlider_valueChanged(int value);
+    void on_delaySpinBox_valueChanged(int value);
+
+    void onTaskStart();
+    void onTaskFinish();
+
+    void on_stopButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     std::shared_ptr<Visualizer> visualizer;

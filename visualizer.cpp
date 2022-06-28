@@ -2,6 +2,7 @@
 #include <QSizePolicy>
 #include <QPainter>
 #include <QLabel>
+#include <random>
 #include <cmath>
 
 Visualizer::Visualizer(QWidget *parent, int elements)
@@ -18,6 +19,16 @@ Visualizer::Visualizer(QWidget *parent, int elements)
     arr = std::vector<int>(elements);
     for (int i = 0; i < arr.size(); i++)
         arr[i] = i + 1;
+
+    // connecting
+    QObject::connect(
+        this, &Visualizer::taskStart,
+        this, &Visualizer::onTaskStart
+    );
+    QObject::connect(
+        this, &Visualizer::taskFinished,
+        this, &Visualizer::onTaskFinished
+    );
 }
 
 void Visualizer::paintEvent(QPaintEvent *event) {
@@ -50,6 +61,76 @@ void Visualizer::paintEvent(QPaintEvent *event) {
         );
     }
 }
+
+void Visualizer::stopTask() {
+    mutex.lock();
+    currentTask->terminate();
+    currentTask->wait();
+    mutex.unlock();
+    emit taskFinished();
+}
+
+void Visualizer::shuffle() {
+    if (currentTask)
+        throw std::runtime_error("There is a task currently running.");
+    emit taskStart(new Tasks::ShuffleTask(arr, delay));
+}
+
+void Visualizer::onDelayChange(int newDelay) {
+    mutex.lock();
+    delay = newDelay;
+    mutex.unlock();
+}
+
+void Visualizer::onArrayChange() {
+    mutex.lock();
+    repaint();
+    mutex.unlock();
+}
+
+void Visualizer::onTaskStart(Tasks::Task* task) {
+    mutex.lock();
+
+    currentTask = task;
+    QObject::connect(
+        currentTask, &Tasks::Task::finished,
+        this, &Visualizer::emitTaskFinished
+    );
+    QObject::connect(
+        currentTask, &Tasks::Task::changeDone,
+        this, &Visualizer::onArrayChange
+    );
+
+    currentTask->start();
+    mutex.unlock();
+}
+
+void Visualizer::onTaskFinished() {
+    mutex.lock();
+    delete currentTask;
+    currentTask = nullptr;
+    mutex.unlock();
+}
+
+Tasks::Task::Task(std::vector<int> &array, int &delay)
+    : arr(array), delay(delay)
+{  }
+
+void Tasks::ShuffleTask::run() {
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    for (int i = arr.size(); i > 0; i--) {
+        std::uniform_int_distribution<int> dist(0, i - 1);
+        std::swap(arr[i], arr[dist(mt)]);
+        emit changeDone();
+        msleep(delay);
+    }
+}
+
+
+
+
+
 
 
 
