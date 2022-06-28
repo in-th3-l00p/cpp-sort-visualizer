@@ -37,6 +37,10 @@ void MainWindow::on_shuffleButton_clicked() {
     visualizer->shuffle();
 }
 
+void MainWindow::on_sortButton_clicked() {
+    visualizer->sort(ui->algorithmComboBox->currentText());
+}
+
 void MainWindow::on_delaySlider_valueChanged(int value) {
     ui->delaySpinBox->setValue(value);
 }
