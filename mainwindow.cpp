@@ -16,6 +16,10 @@ MainWindow::MainWindow(QWidget *parent)
         visualizer.get(), &Visualizer::onDelayChange
     );
     QObject::connect(
+        ui->sizeSlider, &QSlider::valueChanged,
+        visualizer.get(), &Visualizer::onArrayResize
+    );
+    QObject::connect(
         visualizer.get(), &Visualizer::taskStart,
         this, &MainWindow::onTaskStart
     );
@@ -41,12 +45,20 @@ void MainWindow::on_sortButton_clicked() {
     visualizer->sort(ui->algorithmComboBox->currentText());
 }
 
-void MainWindow::on_delaySlider_valueChanged(int value) {
-    ui->delaySpinBox->setValue(value);
+void MainWindow::on_delaySlider_valueChanged(int newValue) {
+    ui->delaySpinBox->setValue(newValue);
 }
 
-void MainWindow::on_delaySpinBox_valueChanged(int value) {
-    ui->delaySlider->setValue(value);
+void MainWindow::on_delaySpinBox_valueChanged(int newValue) {
+    ui->delaySlider->setValue(newValue);
+}
+
+void MainWindow::on_sizeSlider_valueChanged(int newValue) {
+    ui->sizeSpinBox->setValue(newValue);
+}
+
+void MainWindow::on_sizeSpinBox_valueChanged(int newValue) {
+    ui->sizeSlider->setValue(newValue);
 }
 
 void MainWindow::onTaskStart() {

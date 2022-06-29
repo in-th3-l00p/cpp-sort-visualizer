@@ -3,7 +3,6 @@
 #include <QPainter>
 #include <QLabel>
 #include <random>
-#include <cmath>
 
 Visualizer::Visualizer(QWidget *parent, int initialElements, int initialDelay)
     : QWidget(parent), delay(initialDelay)
@@ -41,14 +40,15 @@ void Visualizer::paintEvent(QPaintEvent *event) {
     painter.setPen(Qt::white);
     painter.drawRect(0, 0, canvasWidth - 1, canvasHeight - 1);
 
-    // drawing the array's elements
+    // finding the best dimensions
     int elementWidth = static_cast<int>(
-        ceil(static_cast<double>(canvasWidth) / arr.size())
+        std::floor(static_cast<double>(canvasWidth) / arr.size())
     );
     int elementUnitHeight = static_cast<int>(
-        ceil(static_cast<double>(canvasHeight) / arr.size())
+        std::floor(static_cast<double>(canvasHeight) / arr.size())
     );
 
+    // drawing the array's elements
     painter.setBrush(Qt::cyan);
     painter.setPen(Qt::darkBlue);
     for (int i = 0; i < arr.size(); i++) {
@@ -130,6 +130,15 @@ void Visualizer::onTaskFinished() {
     delete currentTask;
     currentTask = nullptr;
     mutex.unlock();
+}
+
+void Visualizer::onArrayResize(int newSize) {
+    int lastSize = arr.size();
+    arr.resize(newSize);
+    if (lastSize < newSize)
+        for (int i = lastSize; i < arr.size(); i++)
+            arr[i] = i + 1;
+    repaint();
 }
 
 void Tasks::Task::checkIndex(int i) {

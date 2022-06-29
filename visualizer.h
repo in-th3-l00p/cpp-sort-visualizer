@@ -126,6 +126,7 @@ public slots:
     void onTaskStart(Tasks::Task* task);
     void onTaskFinished();
     void emitTaskFinished() { emit taskFinished(); }
+    void onArrayResize(int newSize);
 };
 
 #endif // VISUALIZER_H
