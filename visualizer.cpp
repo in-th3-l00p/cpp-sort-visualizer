@@ -130,6 +130,7 @@ void Visualizer::onTaskFinished() {
 }
 
 void Visualizer::onArrayResize(int newSize) {
+    checkTaskRunning();
     int lastSize = arr.size();
     arr.resize(newSize);
     if (lastSize < newSize)

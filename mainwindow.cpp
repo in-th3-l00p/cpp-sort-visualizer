@@ -65,10 +65,14 @@ void MainWindow::onTaskStart() {
     ui->stopButton->setEnabled(true);
     ui->shuffleButton->setEnabled(false);
     ui->sortButton->setEnabled(false);
+    ui->sizeSlider->setEnabled(false);
+    ui->sizeSpinBox->setEnabled(false);
 }
 
 void MainWindow::onTaskFinish() {
     ui->stopButton->setEnabled(false);
     ui->shuffleButton->setEnabled(true);
     ui->sortButton->setEnabled(true);
+    ui->sizeSlider->setEnabled(true);
+    ui->sizeSpinBox->setEnabled(true);
 }
