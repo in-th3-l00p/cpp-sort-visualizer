@@ -41,24 +41,21 @@ void Visualizer::paintEvent(QPaintEvent *event) {
     painter.drawRect(0, 0, canvasWidth - 1, canvasHeight - 1);
 
     // finding the best dimensions
-    int elementWidth = static_cast<int>(
-        std::floor(static_cast<double>(canvasWidth) / arr.size())
-    );
-    int elementUnitHeight = static_cast<int>(
-        std::floor(static_cast<double>(canvasHeight) / arr.size())
-    );
+    double elementWidth = static_cast<double>(canvasWidth) / arr.size();
+    double elementUnitHeight = static_cast<double>(canvasHeight) / arr.size();
 
     // drawing the array's elements
     painter.setBrush(Qt::cyan);
     painter.setPen(Qt::darkBlue);
     for (int i = 0; i < arr.size(); i++) {
-        int elementHeight = elementUnitHeight * arr[i];
-        painter.drawRect(
+        double elementHeight = elementUnitHeight * arr[i];
+        QRectF rectangle{
             i * elementWidth,
             canvasHeight - elementHeight,
             elementWidth,
             elementHeight
-        );
+        };
+        painter.drawRect(rectangle);
     }
 }
 
